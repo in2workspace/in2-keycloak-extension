@@ -2,14 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>es.in2.keycloak</groupId>
     <artifactId>issuer-keycloak-plugin</artifactId>
     <version>1.1.0</version>
     <packaging>jar</packaging>
-
     <name>IN2 Pre-Authorized Code Keycloak Plugin</name>
-    <description>Keycloak plugin for support of the Pre-Authorized code flow for issuing of verifiable credentials</description>
+    <description>Keycloak plugin for support of the Pre-Authorized code flow for issuing of verifiable credentials
+    </description>
     <url>https://github.com/in2workspace/issuer-keycloak-plugin</url>
     <inceptionYear>2024</inceptionYear>
     <organization>
@@ -22,14 +21,11 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
-
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
         <!-- project info -->
         <project.author.name>IN2</project.author.name>
         <project.author.email>domesupport@in2.es</project.author.email>
@@ -45,26 +41,21 @@
         <project.vendor>IN2 Ingeniería de la Información</project.vendor>
         <project.contact.domain>https://in2.es</project.contact.domain>
         <project.contact.email>domesupport@in2.es</project.contact.email>
-
         <!-- frontend build -->
         <version.com.github.eirslett.frontend-maven-plugin>1.12.1</version.com.github.eirslett.frontend-maven-plugin>
         <version.frontend.node>v18.9.0</version.frontend.node>
         <version.org.apache.maven.plugins.maven-clean-plugin>3.2.0</version.org.apache.maven.plugins.maven-clean-plugin>
-
         <!-- lazy dev -->
         <version.org.projectlombok>1.18.24</version.org.projectlombok>
         <version.org.openapitools.generator-maven-plugin>6.3.0</version.org.openapitools.generator-maven-plugin>
         <version.io.swagger.swagger-annotations>1.6.9</version.io.swagger.swagger-annotations>
-
         <!-- keycloak -->
         <version.org.keycloak.libs>24.0.1</version.org.keycloak.libs>
-
         <!-- version to be used for tests - can be different from the libs -->
         <keycloak.version>24.0.1</keycloak.version>
         <keycloak.image>quay.io/keycloak/keycloak:${keycloak.version}</keycloak.image>
         <version.org.eclipse.jkube.kubernetes-maven-plugin>1.10.1</version.org.eclipse.jkube.kubernetes-maven-plugin>
         <version.org.keycloak.keycloak-admin-client>${keycloak.version}</version.org.keycloak.keycloak-admin-client>
-
         <!-- test -->
         <version.io.fabric8.maven-plugin>4.4.2</version.io.fabric8.maven-plugin>
         <version.io.kokuwa.maven.k3s-plugin>0.6.2</version.io.kokuwa.maven.k3s-plugin>
@@ -80,16 +71,16 @@
         <jacoco.reportFolder>${project.build.directory}/site/jacoco</jacoco.reportFolder>
         <jacoco.utReportFile>${jacoco.reportFolder}/test.exec</jacoco.utReportFile>
         <spotbugs.reportFolder>${project.build.directory}/site/spotbugs</spotbugs.reportFolder>
-
         <!-- sonar -->
-        <sonar.projectName>Issuer Keycloak Plugin</sonar.projectName>
-        <sonar.projectKey>in2workspace_pre-authorized-code-keycloak-plugin</sonar.projectKey>
+        <sonar.projectName>IN2 Keycloak Extension</sonar.projectName>
+        <sonar.projectKey>in2workspace_in2-keycloak-extension</sonar.projectKey>
         <sonar.organization>in2workspace</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-
         <!-- This classes need more test and should be removed from the sonar exclusions -->
-        <sonar.coverage.exclusions>src/main/java/es/in2/keycloak/VCIssuerRealmResourceProvider.java,src/main/java/es/in2/keycloak/controller/SIOP2ClientRegistrationProvider.java</sonar.coverage.exclusions>
-
+        <sonar.coverage.exclusions>
+            src/main/java/es/in2/keycloak/VCIssuerRealmResourceProvider.java,
+            src/main/java/es/in2/keycloak/controller/SIOP2ClientRegistrationProvider.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
