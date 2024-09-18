@@ -24,13 +24,15 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
+      - name: List files for debugging
+        run: ls -R
       - name: Build and Push docker image
         run: |
           mvn --batch-mode -DskipTests clean package
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
-          echo IMAGE_TAG
+          echo "IMAGE_TAG: $IMAGE_TAG"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
