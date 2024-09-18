@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>es.in2.keycloak</groupId>
-    <artifactId>issuer-keycloak-plugin</artifactId>
+    <artifactId>in2-keycloak-extension</artifactId>
     <version>1.1.0</version>
     <packaging>jar</packaging>
-    <name>IN2 Pre-Authorized Code Keycloak Plugin</name>
-    <description>Keycloak plugin for support of the Pre-Authorized code flow for issuing of verifiable credentials
-    </description>
-    <url>https://github.com/in2workspace/issuer-keycloak-plugin</url>
+    <name>IN2 Keycloak Extension</name>
+    <description>Keycloak extension for support of the pre-authorized code flow for issuing of verifiable credentials</description>
+    <url>https://github.com/in2workspace/in2-keycloak-extension</url>
     <inceptionYear>2024</inceptionYear>
     <organization>
         <name>IN2</name>
@@ -21,6 +22,7 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -29,15 +31,10 @@
         <!-- project info -->
         <project.author.name>IN2</project.author.name>
         <project.author.email>domesupport@in2.es</project.author.email>
-        <project.description>IN2 Authorization VC-Issuer is an extension to keycloak, that allows the custom
-            OAUTH 2.0 for users in a VC flow.
-        </project.description>
-        <project.summary>Keycloak plugin IN2 Authorization Verifiable Credentials.</project.summary>
-        <project.url>https://github.com/in2workspace/issuer-keycloak-plugin</project.url>
         <project.license.name>GNU Affero General Public License v3.0</project.license.name>
         <project.license.identifier>Apache License 2.0</project.license.identifier>
         <project.license.url>https://www.apache.org/licenses/LICENSE-2.0</project.license.url>
-        <project.title>IN2 Authorization VC-Issuer</project.title>
+        <project.title>IN2 Keycloak Extension</project.title>
         <project.vendor>IN2 Ingeniería de la Información</project.vendor>
         <project.contact.domain>https://in2.es</project.contact.domain>
         <project.contact.email>domesupport@in2.es</project.contact.email>
@@ -50,7 +47,7 @@
         <version.org.openapitools.generator-maven-plugin>6.3.0</version.org.openapitools.generator-maven-plugin>
         <version.io.swagger.swagger-annotations>1.6.9</version.io.swagger.swagger-annotations>
         <!-- keycloak -->
-        <version.org.keycloak.libs>24.0.1</version.org.keycloak.libs>
+        <version.org.keycloak.libs>24.0.3</version.org.keycloak.libs>
         <!-- version to be used for tests - can be different from the libs -->
         <keycloak.version>24.0.1</keycloak.version>
         <keycloak.image>quay.io/keycloak/keycloak:${keycloak.version}</keycloak.image>
