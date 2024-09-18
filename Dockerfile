@@ -6,8 +6,11 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 COPY /api/api.yaml ./api/
 COPY /api/openapi.yaml ./api/
-RUN mvn clean install
-
+RUN if [ "$SKIP_TESTS" = "true" ]; then \
+    mvn clean install -DskipTests; \
+  else \
+    mvn clean install; \
+  fi
 
 # Segunda etapa: Creación de la imagen de Keycloak
 FROM quay.io/keycloak/keycloak:24.0.1
