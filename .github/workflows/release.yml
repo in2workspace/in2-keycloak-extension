@@ -32,7 +32,7 @@ jobs:
           VERSION=$(cat VERSION)
           PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
-          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -65,7 +65,7 @@ jobs:
           VERSION=$(cat VERSION)
           PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
-          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -98,7 +98,7 @@ jobs:
           VERSION=$(cat VERSION)
           PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
-          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -131,7 +131,7 @@ jobs:
           VERSION=$(cat VERSION)
           PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
-          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
