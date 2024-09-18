@@ -27,11 +27,7 @@ jobs:
       - name: Build and Push docker image
         run: |
           mvn versions:display-property-updates
-          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
-          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
-          VERSION=$(cat VERSION)
-          PROJECT_NAME=$(cat PROJECT_NAME)
-          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
+          IMAGE_TAG="$PROJECT_NAME:v$PROJECT_VERSION$SUFFIX"
           docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -40,6 +36,8 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -snapshot
+          PROJECT_NAME: in2-keycloak-extension
+          PROJECT_VERSION: v1.1.0
   release-dev:
     name: release-dev
     runs-on: ubuntu-latest
@@ -60,11 +58,7 @@ jobs:
       - name: Build and Push docker image
         run: |
           mvn versions:display-property-updates
-          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
-          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
-          VERSION=$(cat VERSION)
-          PROJECT_NAME=$(cat PROJECT_NAME)
-          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
+          IMAGE_TAG="$PROJECT_NAME:PROJECT_VERSION$SUFFIX"
           docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -73,6 +67,8 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -snapshot
+          PROJECT_NAME: in2-keycloak-extension
+          PROJECT_VERSION: v1.1.0
   release-test:
     name: release-test
     runs-on: ubuntu-latest
@@ -93,11 +89,7 @@ jobs:
       - name: Build and Push docker image
         run: |
           mvn versions:display-property-updates
-          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
-          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
-          VERSION=$(cat VERSION)
-          PROJECT_NAME=$(cat PROJECT_NAME)
-          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
+          IMAGE_TAG="$PROJECT_NAME:v$PROJECT_VERSION$SUFFIX"
           docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -106,6 +98,8 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -rc1
+          PROJECT_NAME: in2-keycloak-extension
+          PROJECT_VERSION: v1.1.0
   release-prod:
     name: release-prod
     runs-on: ubuntu-latest
@@ -126,12 +120,8 @@ jobs:
       - name: Build and Push docker image
         run: |
           mvn versions:display-property-updates
-          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
-          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
-          VERSION=$(cat VERSION)
-          PROJECT_NAME=$(cat PROJECT_NAME)
-          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
-          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          IMAGE_TAG="$PROJECT_NAME:v$PROJECT_VERSION$SUFFIX"
+          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -139,3 +129,5 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -ga
+          PROJECT_NAME: in2-keycloak-extension
+          PROJECT_VERSION: v1.1.0
