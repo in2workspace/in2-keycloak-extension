@@ -26,9 +26,10 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
-          mvn versions:display-property-updates
-          IMAGE_TAG="$PROJECT_NAME:v$PROJECT_VERSION$SUFFIX"
-          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
+          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -36,8 +37,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -snapshot
-          PROJECT_NAME: in2-keycloak-extension
-          PROJECT_VERSION: v1.1.0
   release-dev:
     name: release-dev
     runs-on: ubuntu-latest
@@ -57,9 +56,10 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
-          mvn versions:display-property-updates
-          IMAGE_TAG="$PROJECT_NAME:PROJECT_VERSION$SUFFIX"
-          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
+          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -67,8 +67,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -snapshot
-          PROJECT_NAME: in2-keycloak-extension
-          PROJECT_VERSION: v1.1.0
   release-test:
     name: release-test
     runs-on: ubuntu-latest
@@ -88,9 +86,10 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
-          mvn versions:display-property-updates
-          IMAGE_TAG="$PROJECT_NAME:v$PROJECT_VERSION$SUFFIX"
-          docker buildx build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
+          docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
         env:
@@ -98,8 +97,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -rc1
-          PROJECT_NAME: in2-keycloak-extension
-          PROJECT_VERSION: v1.1.0
   release-prod:
     name: release-prod
     runs-on: ubuntu-latest
@@ -119,8 +116,9 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
-          mvn versions:display-property-updates
-          IMAGE_TAG="$PROJECT_NAME:v$PROJECT_VERSION$SUFFIX"
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -129,5 +127,3 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
           SUFFIX: -ga
-          PROJECT_NAME: in2-keycloak-extension
-          PROJECT_VERSION: v1.1.0
