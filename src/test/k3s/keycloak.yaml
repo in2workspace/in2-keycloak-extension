@@ -1,0 +1,104 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: keycloak
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      initContainers:
+        - name: add-plugin
+          image: keycloak-vc-issuer
+          imagePullPolicy: Never
+          volumeMounts:
+            - mountPath: /target
+              name: providers
+      containers:
+        - name: keycloak
+          image: keycloak
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+              name: http
+          command: ["/opt/keycloak/bin/kc.sh"]
+          args: ["start-dev", "--health-enabled=true", "--log-level DEBUG"]
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: admin
+            - name: VCISSUER_WALTID_ADDRESS
+              value: http://waltid
+            - name: VCISSUER_ISSUER_DID
+              value: did:key:z6MkqmaCT2JqdUtLeKah7tEVfNXtDXtQyj4yxEgV11Y5CqUa
+            - name: VCISSUER_ISSUER_KEY_FILE
+              value: /opt/keys/keyfile.json
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 1
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 1
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /opt/keycloak/providers/
+              name: providers
+            - mountPath: /opt/keys
+              name: keyfile
+      volumes:
+        - name: providers
+          emptyDir: {}
+        - name: keyfile
+          configMap:
+            name: keycloak-issuer-key
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-issuer-key
+data:
+  keyfile.json: |
+    {
+      "kty": "OKP",
+      "d": "fcMKCbtj4f14DdZtiBCzPqRkGQPNmsl0nt3IwU1HtLg",
+      "use": "sig",
+      "crv": "Ed25519",
+      "kid": "z6MkqmaCT2JqdUtLeKah7tEVfNXtDXtQyj4yxEgV11Y5CqUa",
+      "x": "lqXp4SMT6En9uF130rLeNsan8-790AJ10RqeC7oQHe4",
+      "alg": "EdDSA"
+    }
