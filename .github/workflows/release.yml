@@ -26,6 +26,7 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
+          mvn --batch-mode -DskipTests clean package
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
@@ -56,6 +57,7 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
+          mvn --batch-mode -DskipTests clean package
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
@@ -86,6 +88,7 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
+          mvn --batch-mode -DskipTests clean package
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
@@ -116,6 +119,7 @@ jobs:
           java-version: '17'
       - name: Build and Push docker image
         run: |
+          mvn --batch-mode -DskipTests clean package
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"

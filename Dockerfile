@@ -6,22 +6,17 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 COPY /api/api.yaml ./api/
 COPY /api/openapi.yaml ./api/
-RUN if [ "$SKIP_TESTS" = "true" ]; then \
-    mvn clean install -DskipTests; \
-  else \
-    mvn clean install; \
-  fi
+RUN mvn clean install
 
 # Segunda etapa: Creación de la imagen de Keycloak
 FROM quay.io/keycloak/keycloak:24.0.1
-#https://github.com/keycloak/keycloak/issues/17320#issuecomment-1642174124
 USER root
 RUN ["sed", "-i", "s/SHA1, //g", "/usr/share/crypto-policies/DEFAULT/java.txt"]
 USER 1000
 
 # Copiar el artefacto de la aplicación desde la etapa de compilación
 COPY --from=builder /app/target/classes/keyfile.json /opt/keycloak/providers/keyfile.json
-COPY --from=builder /app/target/*.jar /opt/keycloak/providers/
+COPY --from=builder /app/target/in2-keycloak-extension-1.1.0.jar.jar /opt/keycloak/providers/
 
 #ENV KC_SPI_THEME_ADMIN_DEFAULT=siop-2
 ENV VCISSUER_ISSUER_DID="did:key:z6MkqmaCT2JqdUtLeKah7tEVfNXtDXtQyj4yxEgV11Y5CqUa"
