@@ -496,9 +496,10 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>echo</executable>
+                            <executable>cmd</executable>
                             <arguments>
-                                <argument>${project.version}</argument>
+                                <argument>/c</argument>
+                                <argument>echo ${project.version}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -510,9 +511,10 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>echo</executable>
+                            <executable>cmd</executable>
                             <arguments>
-                                <argument>${project.name}</argument>
+                                <argument>/c</argument>
+                                <argument>echo ${project.name}</argument>
                             </arguments>
                         </configuration>
                     </execution>
