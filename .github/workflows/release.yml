@@ -18,20 +18,19 @@ jobs:
     environment: local
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Make Gradlew Executable
-        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          ./gradlew printVersion
-          ./gradlew printProjectName
-          VERSION=$(./gradlew -q printVersion)
-          PROJECT_NAME=$(./gradlew -q printProjectName)
+          mvn versions:display-property-updates
+          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
+          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
+          VERSION=$(cat VERSION)
+          PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
@@ -52,20 +51,19 @@ jobs:
     environment: dev
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Make Gradlew Executable
-        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          ./gradlew printVersion
-          ./gradlew printProjectName
-          VERSION=$(./gradlew -q printVersion)
-          PROJECT_NAME=$(./gradlew -q printProjectName)
+          mvn versions:display-property-updates
+          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
+          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
+          VERSION=$(cat VERSION)
+          PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
@@ -86,20 +84,19 @@ jobs:
     environment: test
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Make Gradlew Executable
-        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          ./gradlew printVersion
-          ./gradlew printProjectName
-          VERSION=$(./gradlew -q printVersion)
-          PROJECT_NAME=$(./gradlew -q printProjectName)
+          mvn versions:display-property-updates
+          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
+          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
+          VERSION=$(cat VERSION)
+          PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
@@ -120,20 +117,19 @@ jobs:
     environment: prod
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Make Gradlew Executable
-        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          ./gradlew printVersion
-          ./gradlew printProjectName
-          VERSION=$(./gradlew -q printVersion)
-          PROJECT_NAME=$(./gradlew -q printProjectName)
+          mvn versions:display-property-updates
+          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > VERSION
+          mvn help:evaluate -Dexpression=project.name -q -DforceStdout > PROJECT_NAME
+          VERSION=$(cat VERSION)
+          PROJECT_NAME=$(cat PROJECT_NAME)
           IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
