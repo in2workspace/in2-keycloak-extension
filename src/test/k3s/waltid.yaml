@@ -44,17 +44,17 @@ data:
     {
       "@context": ["https://www.w3.org/2018/credentials/v1"],
       "credentialSchema": {
-       "id": "https://raw.githubusercontent.com/FIWARE-Ops/batterypass-demonstrator/main/docs/schema.json",
-       "type": "FullJsonSchemaValidator2021"
+        "id": "https://raw.githubusercontent.com/FIWARE-Ops/batterypass-demonstrator/main/docs/schema.json",
+        "type": "FullJsonSchemaValidator2021"
       },
       "credentialSubject": {
-       "familyName": "Happy",
-       "firstName": "User",
-       "id": "did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp",
-       "roles": [{
-         "names": ["P.Info.gold"],
-         "target": "did:elsi:target"
-       }]
+        "familyName": "Happy",
+        "firstName": "User",
+        "id": "did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp",
+        "roles": [{
+          "names": ["P.Info.gold"],
+          "target": "did:elsi:target"
+        }]
       },
       "id": "urn:uuid:3add94f4-28ec-42a1-8704-4e4aa51006b4",
       "issued": "2021-08-31T00:00:00Z",

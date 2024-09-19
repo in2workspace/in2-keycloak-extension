@@ -1,18 +1,39 @@
 <div align="center">
-<h1>Issuer Keycloak Plugin</h1>
+
+<h1>IN2 Keycloak Extension</h1>
 <span>by </span><a href="https://in2.es">in2.es</a>
 <p><p>
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_in2-keycloak-extension&metric=alert_status)](https://sonarcloud.io/dashboard?id=in2workspace_in2-keycloak-extension)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=bugs)](https://sonarcloud.io/summary/new_code?in2workspace_credential-issuer)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=in2workspace_credential-issuer)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=security_rating)](https://sonarcloud.io/dashboard?id=in2workspace_credential-issuer)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=in2workspace_credential-issuer)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=ncloc)](https://sonarcloud.io/dashboard?id=in2workspace_credential-issuer)
+
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_in2-keycloak-extension&metric=coverage)](https://sonarcloud.io/summary/new_code?id=in2workspace_in2-keycloak-extension)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=in2workspace_credential-issuer)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=in2workspace_credential-issuer)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=in2workspace_credential-issuer)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=in2workspace_credential-issuer&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=in2workspace_credential-issuer)
 
 </div>
 
 # Introduction
-Issuer Keycloak Plugin is a service that allows to build the identity provider solution for the Issuer application. It composes of an offical Keycloak image and integrate a custom layer with tailored logic to comply with the requierement of the technical specification [OpenID4VCI DOME profile](https://dome-marketplace.github.io/OpenID4VCI-DOMEprofile/openid-4-verifiable-credential-issuance-wg-draft.html) (Issuer-initiated flow)
+
+The Keycloak Extension is a service that allows to build the identity provider solution for the Issuer application. 
+It composes of an official Keycloak image and integrates a custom layer with tailored logic 
+to comply with the requirement of the technical specification [OpenID4VCI DOME profile](https://dome-marketplace.github.io/OpenID4VCI-DOMEprofile/openid-4-verifiable-credential-issuance-wg-draft.html)
+(Issuer-initiated flow)
 
 # Installation
-As key part of the Credential Issuer solution the Issuer Keycloak Plugin is designed to work with the following dependencies:
-## Dependencies
-To utilize the Credential Issuer, you will need the following components:
 
+As a key part of the Credential Issuer solution, the Keycloak extension is designed to work with the following dependencies:
+
+## Dependencies
+
+To use the Credential Issuer, you will need the following components:
 
 - **Issuer-UI**
 - **Issuer-API**
@@ -24,6 +45,7 @@ For each dependency, you can refer to their respective repositories for detailed
 We offer a Docker image to run the application. You can find it in [Docker Hub](https://hub.docker.com/u/in2workspace).
 
 Here, you can find an example of how to run the application with all the required services and configuration.
+
 ### Issuer UI
 Issuer UI is the user interface for the Credential Issuer. Refer to the [Issuer UI Documentation](https://github.com/in2workspace/issuer-ui) for more information on configuration variables.
 
