@@ -24,8 +24,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: List files for debugging
-        run: ls -R
       - name: Build and Push docker image
         run: |
           mvn --batch-mode -DskipTests clean package
@@ -61,8 +59,8 @@ jobs:
       - name: Build and Push docker image
         run: |
           mvn --batch-mode -DskipTests clean package
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+#          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+#          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
@@ -71,6 +69,8 @@ jobs:
           DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_HUB_CLIENT_NAME: in2workspace
+          PROJECT_NAME: in2-keycloak-extension
+          VERSION: v1.1.0
           SUFFIX: -snapshot
   release-test:
     name: release-test
