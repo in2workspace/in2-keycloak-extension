@@ -1,30 +1,41 @@
-# Primera etapa: Compilación de la aplicación
-FROM maven:3.8.4-openjdk-17-slim AS builder
-WORKDIR /app
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-COPY src ./src
-COPY /api/api.yaml ./api/
-COPY /api/openapi.yaml ./api/
-RUN mvn clean install
+# Stage 1: Build the project
+FROM docker.io/gradle:8.4.0 AS builder
+ARG SKIP_TESTS=false
+WORKDIR /home/gradle/src
+# Copy the project files
+COPY gradle /home/gradle/src/gradle
+COPY checkstyle /home/gradle/src/checkstyle
+COPY api /home/gradle/src/api
+COPY build.gradle settings.gradle /home/gradle/src/
+COPY src /home/gradle/src/src
+# Clean the project and generate the OpenAPI client
+RUN gradle clean --no-daemon \
+    && gradle openApiGenerate --no-daemon \
+    # Verify the generated sources \
+    && ls /home/gradle/src/build/generated \
+    # Build the project \
+    && if [ "$SKIP_TESTS" = "true" ]; then \
+      gradle build --no-daemon -x test; \
+    else \
+      gradle build --no-daemon; \
+    fi
 
-# Segunda etapa: Creación de la imagen de Keycloak
-FROM quay.io/keycloak/keycloak:24.0.1
+# Verify the contents of the build/libs directory
+RUN ls /home/gradle/src/build/libs
+# Stage 2: Build the final image
+FROM quay.io/keycloak/keycloak:26.0.0
 USER root
 RUN ["sed", "-i", "s/SHA1, //g", "/usr/share/crypto-policies/DEFAULT/java.txt"]
 USER 1000
-
-# Copiar el artefacto de la aplicación desde la etapa de compilación
-COPY --from=builder /app/target/classes/keyfile.json /opt/keycloak/providers/keyfile.json
-COPY --from=builder /app/target/in2-keycloak-extension-1.1.0.jar /opt/keycloak/providers/
-
-#ENV KC_SPI_THEME_ADMIN_DEFAULT=siop-2
-ENV VCISSUER_ISSUER_DID="did:key:z6MkqmaCT2JqdUtLeKah7tEVfNXtDXtQyj4yxEgV11Y5CqUa"
-ENV VCISSUER_ISSUER_KEY_FILE="/opt/keycloak/providers/keyfile.json"
-
-#RUN bash -c 'touch /app/in2-issuer-backend-0.2.0-SNAPSHOT.jar'
-#COPY azure/applicationinsights-agent-3.4.8.jar  /build/applicationinsights-agent-3.4.8.jar
-#COPY azure/applicationinsights.json /build/applicationinsights.json
-
+WORKDIR /app
+# Copy the JAR file from the builder image
+COPY --from=builder /home/gradle/src/build/libs/*.jar /opt/keycloak/providers/
+# Copy the Realm configuration file to the Keycloak configuration directory
+COPY /import /opt/keycloak/data/import
 EXPOSE 8080
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--health-enabled=true","--metrics-enabled=true", "--log-level=INFO", "--import-realm"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", \
+            "start-dev", \
+            "--health-enabled=true", \
+            "--metrics-enabled=true", \
+            "--log-level=INFO", \
+            "--import-realm"]
