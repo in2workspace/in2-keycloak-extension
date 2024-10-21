@@ -13,7 +13,7 @@ public class KeycloakConfig {
     }
 
     public static String getRealm() {
-        return System.getenv("KEYCLOAK_REAL");
+        return System.getenv("KEYCLOAK_REALM");
     }
 
     /**

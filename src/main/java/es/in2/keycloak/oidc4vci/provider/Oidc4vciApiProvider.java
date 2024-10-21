@@ -1,18 +1,18 @@
 package es.in2.keycloak.oidc4vci.provider;
 
+import es.in2.keycloak.oidc4vci.service.Oidc4vciService;
+import es.in2.keycloak.oidc4vci.service.impl.Oidc4VciServiceImpl;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import es.in2.keycloak.oidc4vci.service.Oidc4vciService;
-import es.in2.keycloak.oidc4vci.service.impl.Oidc4VciServiceImpl;
-import org.fikua.model.*;
+import org.fikua.model.ErrorResponse;
+import org.fikua.model.PreAuthorizedCodeGrant;
+import org.fikua.model.TokenResponse;
 import org.keycloak.models.KeycloakSession;
-import org.keycloak.protocol.oid4vc.model.ErrorType;
 import org.keycloak.services.ErrorResponseException;
+import org.keycloak.services.managers.AppAuthManager;
 import org.keycloak.services.resource.RealmResourceProvider;
-
-import java.util.Optional;
 
 @Slf4j
 @Path("vci")
@@ -22,11 +22,10 @@ public class Oidc4vciApiProvider implements RealmResourceProvider {
 
     private final KeycloakSession session;
 
-    private final Oidc4vciService oidc4VCIService = new Oidc4VciServiceImpl();
-
     public Oidc4vciApiProvider(KeycloakSession session) {
         this.session = session;
     }
+    private final Oidc4vciService oidc4VCIService = new Oidc4VciServiceImpl();
 
     @Override
     public Object getResource() {
@@ -59,46 +58,26 @@ public class Oidc4vciApiProvider implements RealmResourceProvider {
     }
 
     @GET
-    @Path(".well-known/openid-credential-issuer")
+    @Path("pre-authorized-code")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCredentialIssuerMetadata() {
-        return Response.ok()
-                .entity(oidc4VCIService.buildCredentialIssuerMetadata())
-                .header(ACCESS_CONTROL, "*")
-                .build();
-    }
+    public Response getPreAuthorizedCode(@QueryParam("email") String email) {
+        if (email == null || email.isEmpty()) {
+            return getCustomErrorResponse("invalid_request", "Email parameter is missing");
+        }
 
-    @GET
-    @Path("credential-offer")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response getCredentialOffer(@QueryParam("type") String vcType, @QueryParam("format") String vcFormat) {
-        checkVcType(vcType);
-        checkVcFormat(vcFormat);
+        // Create BearerTokenAuthenticator instance here
+        AppAuthManager.BearerTokenAuthenticator bearerTokenAuthenticator = new AppAuthManager.BearerTokenAuthenticator(session);
+
+        // Issue the pre-authorized code and send the tx_code via email
+        PreAuthorizedCodeGrant preAuthorizedCodeGrant = oidc4VCIService.buildPreAuthorizedCodeGrant(email, session, bearerTokenAuthenticator);
+
         return Response.ok()
-                .entity(oidc4VCIService.buildCredentialOffer(vcType))
+                .entity(preAuthorizedCodeGrant)
                 .header(ACCESS_CONTROL, "*")
                 .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 
-    @GET
-    @Path("credential-offer/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response getCredentialOfferById(@PathParam("id") String id) {
-        try {
-            return Response.ok()
-                    .entity(oidc4VCIService.getCredentialOfferById(id))
-                    .header(ACCESS_CONTROL, "*")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (ErrorResponseException e) {
-            return Response.fromResponse(e.getResponse())
-                    .entity(e.getResponse())
-                    .header(ACCESS_CONTROL, "*")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        }
-    }
 
     @POST
     @Path("token")
@@ -106,15 +85,15 @@ public class Oidc4vciApiProvider implements RealmResourceProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getToken(@FormParam("grant_type") String grantType,
                              @FormParam("pre-authorized_code") String preAuthorizedCode,
-                             @FormParam("tx_code") String txCode) {
+                             @FormParam("tx_code") int txCode) {
         try {
             // Verify GrantType is pre-authorized_code
             checkGrantType(grantType);
-            // Verify tx_code
-            oidc4VCIService.verifyTxCode(txCode, preAuthorizedCode);
+
             // Build Access Token and Token Response
-            TokenResponse tokenResponse = oidc4VCIService.buildTokenResponse(session, preAuthorizedCode);
-            return Response.ok().entity(tokenResponse)
+            TokenResponse tokenResponse = oidc4VCIService.buildTokenResponse(session, preAuthorizedCode,txCode);
+            return Response.ok()
+                    .entity(tokenResponse)
                     .header(ACCESS_CONTROL, "*")
                     .header("Content-Type", MediaType.APPLICATION_JSON)
                     .build();
@@ -127,29 +106,21 @@ public class Oidc4vciApiProvider implements RealmResourceProvider {
         }
     }
 
-    private Response getErrorResponse(ErrorType errorType) {
-        ErrorResponse.ErrorEnum errorEnum = ErrorResponse.ErrorEnum.fromValue(errorType.getValue());
-        return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorResponse().error(errorEnum))
-                .build();
-    }
-
-    private void checkVcType(String vcType) {
-        Optional.ofNullable(vcType).map(VcType::fromValue).orElseThrow(() ->
-                new ErrorResponseException(getErrorResponse(ErrorType.UNSUPPORTED_CREDENTIAL_TYPE)));
-    }
-
-    private void checkVcFormat(String vcFormat) {
-        Optional.ofNullable(vcFormat).map(VcFormat::fromValue).orElseThrow(() ->
-                new ErrorResponseException(getErrorResponse(ErrorType.UNSUPPORTED_CREDENTIAL_FORMAT)));
-    }
-
     private void checkGrantType(String grantType) {
-        if (!"pre-authorized_code".equals(grantType)) {
-            throw new ErrorResponseException(getErrorResponse(
-                    ErrorType.valueOf(ErrorResponse.ErrorEnum.UNSUPPORTED_GRANT_TYPE.getValue())));
+        if (!"urn:ietf:params:oauth:grant-type:pre-authorized_code".equals(grantType)) {
+            throw new ErrorResponseException(getCustomErrorResponse("unsupported_grant_type", "Unsupported grant type"));
         }
     }
+    private Response getCustomErrorResponse(String error, String message) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setError(ErrorResponse.ErrorEnum.valueOf(error));
+        errorResponse.setMessage(message);
 
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity(errorResponse)
+                .header(ACCESS_CONTROL, "*")
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
 }
+

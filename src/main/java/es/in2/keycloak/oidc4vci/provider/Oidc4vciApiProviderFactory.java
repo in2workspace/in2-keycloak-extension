@@ -15,7 +15,9 @@ public class Oidc4vciApiProviderFactory implements RealmResourceProviderFactory 
     @Override
     public RealmResourceProvider create(KeycloakSession session) {
         log.info("Creating Oidc4vciApiProvider");
-        return new Oidc4vciApiProvider(session);
+        return new Oidc4vciApiProvider(
+                session
+        );
     }
 
     @Override
