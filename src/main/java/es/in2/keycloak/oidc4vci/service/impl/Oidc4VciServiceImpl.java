@@ -124,10 +124,32 @@ public class Oidc4VciServiceImpl implements Oidc4vciService {
         return getTokenResponse(encryptedToken, expiresIn, nonce);
     }
 
+    public FreshNonceResponse generateFreshNonce(String nonce, AppAuthManager.BearerTokenAuthenticator bearerTokenAuthenticator) {
+        //Validate the bearer token against keycloak
+        validateAuthentication(bearerTokenAuthenticator);
+
+        if (cache.getIfPresent(nonce) == null) {
+            throw new ErrorResponseException(Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse().error(ErrorResponse.ErrorEnum.INVALID_NONCE))
+                    .build());
+        }
+        // Invalidate the current nonce and generate a new one
+        cache.invalidate(nonce);
+
+        String newNonce = generateCustomNonce();
+        cache.put(newNonce, newNonce);
+
+        FreshNonceResponse freshNonceResponse = new FreshNonceResponse();
+        freshNonceResponse.cNonce(newNonce);
+        long nonceExpiresIn = (int) TimeUnit.SECONDS.convert(getPreAuthLifespan(), getPreAuthLifespanTimeUnit());
+        freshNonceResponse.cNonceExpiresIn(BigDecimal.valueOf(nonceExpiresIn));
+
+        return freshNonceResponse;
+    }
+
     private static TokenResponse getTokenResponse(String encryptedToken, long expiresIn, String nonce) {
         long nonceExpiresIn = (int) TimeUnit.SECONDS.convert(getPreAuthLifespan(), getPreAuthLifespanTimeUnit());
-        // Build Authorization Details
-
 
         // Build and return TokenResponse
         TokenResponse tokenResponse = new TokenResponse();
@@ -191,7 +213,7 @@ public class Oidc4VciServiceImpl implements Oidc4vciService {
     }
 
 
-    public int generateTxCodeValue() {
+    private int generateTxCodeValue() {
         SecureRandom random = new SecureRandom();
         int codeSize = getTxCodeSize();
         double minValue = Math.pow(10, (double) codeSize - 1);
@@ -204,10 +226,9 @@ public class Oidc4VciServiceImpl implements Oidc4vciService {
         try {
             EmailSenderProvider emailSender = session.getProvider(EmailSenderProvider.class);
 
-            // Definir el cuerpo del correo en texto simple (opcional)
             String textBody = "Hello,\nYour PIN code is: " + txCode + "\nPlease enter this PIN code in your Wallet App.";
 
-            // Definir el cuerpo del correo en HTML, reemplazando el pin dinámicamente
+            // Todo Find a better way to insert the HTML body
             String htmlBody = "<!DOCTYPE html>\n" +
                     "<html lang=\"en\">\n" +
                     "<head>\n" +
@@ -287,7 +308,6 @@ public class Oidc4VciServiceImpl implements Oidc4vciService {
                     "</body>\n" +
                     "</html>";
 
-            // Usar el método send() para enviar el email con cuerpo de texto y HTML
             emailSender.send(session.getContext().getRealm().getSmtpConfig(), email, "Your PIN Code", textBody, htmlBody);
         } catch (EmailException e) {
             throw new EmailSendingException("Error sending email", e);

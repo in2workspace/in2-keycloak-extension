@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.fikua.model.ErrorResponse;
+import org.fikua.model.FreshNonceResponse;
 import org.fikua.model.PreAuthorizedCodeGrant;
 import org.fikua.model.TokenResponse;
 import org.keycloak.models.KeycloakSession;
@@ -105,6 +106,34 @@ public class Oidc4vciApiProvider implements RealmResourceProvider {
                     .build();
         }
     }
+
+    @POST
+    @Path("validate-nonce")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response validateNonce(@FormParam("nonce") String nonce) {
+        try {
+
+            AppAuthManager.BearerTokenAuthenticator bearerTokenAuthenticator = new AppAuthManager.BearerTokenAuthenticator(session);
+
+            // Lógica de validación del nonce en el servicio
+            FreshNonceResponse freshNonceResponse = oidc4VCIService.generateFreshNonce(nonce, bearerTokenAuthenticator);
+
+            return Response.ok()
+                    .entity(freshNonceResponse)
+                    .header(ACCESS_CONTROL, "*")
+                    .header("Content-Type", MediaType.APPLICATION_JSON)
+                    .build();
+
+        } catch (ErrorResponseException e) {
+            return Response.fromResponse(e.getResponse())
+                    .entity(e.getResponse())
+                    .header(ACCESS_CONTROL, "*")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+    }
+
 
     private void checkGrantType(String grantType) {
         if (!"urn:ietf:params:oauth:grant-type:pre-authorized_code".equals(grantType)) {
