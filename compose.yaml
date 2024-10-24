@@ -13,9 +13,11 @@ services:
       TX_CODE_SIZE: 4
       TX_CODE_DESCRIPTION: "Transaction code for the user"
       TOKEN_EXPIRATION: 3600 # 1 hour
-      DB_DATABASE: keycloak
-      DB_USER: postgres
-      DB_PASSWORD: postgres
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_URL_PORT: 5432
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
     volumes:
       - ./import:/opt/keycloak/data/import/
     ports:
