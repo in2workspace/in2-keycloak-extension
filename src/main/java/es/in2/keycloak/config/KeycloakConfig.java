@@ -12,24 +12,6 @@ public class KeycloakConfig {
         return System.getenv("KEYCLOAK_AUTH_SERVER_URL");
     }
 
-    public static String getRealm() {
-        return System.getenv("KEYCLOAK_REALM");
-    }
-
-    /**
-     * Gets the environment variable ISSUER_API_URL from the docker-compose environment
-     */
-    public static String getIssuerUrl() {
-        return System.getenv("ISSUER_API_URL");
-    }
-
-    /**
-     * Obtains the environment variable ISSUER_API_EXTERNAL_URL from the docker-compose environment
-     */
-    public static String getIssuerExternalUrl() {
-        return System.getenv("ISSUER_API_EXTERNAL_URL");
-    }
-
     /**
      * Obtains the environment variable PRE_AUTH_LIFESPAN from the docker-compose environment
      */

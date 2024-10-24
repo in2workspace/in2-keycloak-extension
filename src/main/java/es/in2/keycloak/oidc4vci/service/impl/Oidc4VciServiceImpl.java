@@ -174,8 +174,8 @@ public class Oidc4VciServiceImpl implements Oidc4vciService {
 
     public AuthorizationServerMetadata buildOAuth2AuthorizationServerMetadata() {
         AuthorizationServerMetadata authorizationServerMetadata = new AuthorizationServerMetadata();
-        authorizationServerMetadata.setIssuer(getIssuerExternalUrl());
-        authorizationServerMetadata.setPreAuthorizedGrantEndpoint(getIssuerExternalUrl() + "/pre-authorized-code");
+        authorizationServerMetadata.setIssuer(getAuthServerUrl());
+        authorizationServerMetadata.setPreAuthorizedGrantEndpoint(getAuthServerUrl() + "/pre-authorized-code");
         authorizationServerMetadata.addGrantTypesSupportedItem(AuthorizationServerMetadata.GrantTypesSupportedEnum.URN_IETF_PARAMS_OAUTH_GRANT_TYPE_PRE_AUTHORIZED_CODE);
         authorizationServerMetadata.addResponseTypesSupportedItem(AuthorizationServerMetadata.ResponseTypesSupportedEnum.TOKEN);
         authorizationServerMetadata.setPreAuthorizedGrantAnonymousAccessSupported(true);
