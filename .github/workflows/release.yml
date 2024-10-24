@@ -18,19 +18,21 @@ jobs:
     environment: local
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          mvn --batch-mode -DskipTests clean package
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
-          echo "IMAGE_TAG: $IMAGE_TAG"
+          ./gradlew printVersion
+          ./gradlew printProjectName
+          VERSION=$(./gradlew -q printVersion)
+          PROJECT_NAME=$(./gradlew -q printProjectName)
+          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -50,18 +52,21 @@ jobs:
     environment: dev
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          mvn --batch-mode -DskipTests clean package
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
+          ./gradlew printVersion
+          ./gradlew printProjectName
+          VERSION=$(./gradlew -q printVersion)
+          PROJECT_NAME=$(./gradlew -q printProjectName)
+          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -81,18 +86,21 @@ jobs:
     environment: test
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          mvn --batch-mode -DskipTests clean package
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
+          ./gradlew printVersion
+          ./gradlew printProjectName
+          VERSION=$(./gradlew -q printVersion)
+          PROJECT_NAME=$(./gradlew -q printProjectName)
+          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
@@ -112,18 +120,21 @@ jobs:
     environment: prod
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '17'
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
       - name: Build and Push docker image
         run: |
-          mvn --batch-mode -DskipTests clean package
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          IMAGE_TAG="${PROJECT_NAME}:v${VERSION}$SUFFIX"
+          ./gradlew printVersion
+          ./gradlew printProjectName
+          VERSION=$(./gradlew -q printVersion)
+          PROJECT_NAME=$(./gradlew -q printProjectName)
+          IMAGE_TAG="$PROJECT_NAME:v$VERSION$SUFFIX"
           docker build --file Dockerfile --build-arg SKIP_TESTS=true --tag $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG .
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_HUB_CLIENT_NAME/$IMAGE_TAG
