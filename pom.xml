@@ -6,7 +6,7 @@
 
     <groupId>es.in2.keycloak</groupId>
     <artifactId>in2-keycloak-extension</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
     <name>IN2 Keycloak Extension</name>
     <description>Keycloak extension for support of the pre-authorized code flow for issuing of verifiable credentials</description>

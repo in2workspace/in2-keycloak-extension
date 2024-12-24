@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [release v1.1.1]
+### Changed
+- Update some external config variables to be internal and not exposed externally
+
 ## [release v1.1.0] 
 ### Added
 - Implementation of tx_code PIN according to DOME profile

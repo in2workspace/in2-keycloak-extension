@@ -64,7 +64,8 @@ public class VCIssuerRealmResourceProvider implements RealmResourceProvider {
     // Optional parameters for cache settings
     private static Long customDuration = null;
     private static TimeUnit customTimeUnit = null;
-
+    private static int txCodeSize = 4;
+    private static String txCodeDescription = "A PIN has been sent to your email. Check your inbox. Enter your PIN Code.";
 
     public VCIssuerRealmResourceProvider(KeycloakSession session, String issuerDid,
                                          AppAuthManager.BearerTokenAuthenticator authenticator, Clock clock) {
@@ -227,7 +228,7 @@ public class VCIssuerRealmResourceProvider implements RealmResourceProvider {
         cache.put(preAuthorizedCode, pin);
         Grant grant = new Grant(
                 preAuthorizedCode,
-                Grant.TxCode.builder().description(getTxCodeDescription()).length(getTxCodeSize()).build()
+                Grant.TxCode.builder().description(txCodeDescription).length(txCodeSize).build()
         );
         PreAuthCodeResponse preAuthCodeResponse = PreAuthCodeResponse.builder().grant(grant).pin(pin).build();
         return Response.ok()
@@ -258,7 +259,7 @@ public class VCIssuerRealmResourceProvider implements RealmResourceProvider {
     }
 
     public int generateRandomPin() {
-        int codeSize = getTxCodeSize();
+        int codeSize = txCodeSize;
         double minValue = Math.pow(10, (double) codeSize - 1);
         double maxValue = Math.pow(10, codeSize) - 1;
         // Generate a random number within the specified range.
@@ -448,20 +449,6 @@ public class VCIssuerRealmResourceProvider implements RealmResourceProvider {
      */
     private static TimeUnit getPreAuthLifespanTimeUnit() {
         return TimeUnit.valueOf(System.getenv("PRE_AUTH_LIFESPAN_TIME_UNIT").toUpperCase());
-    }
-
-    /**
-     * Obtains the environment variable TX_CODE_SIZE from the docker-compose environment
-     */
-    private static int getTxCodeSize() {
-        return Integer.parseInt(System.getenv("TX_CODE_SIZE"));
-    }
-
-    /**
-     * Obtains the environment variable TX_CODE_DESCRIPTION from the docker-compose environment
-     */
-    private static String getTxCodeDescription() {
-        return System.getenv("TX_CODE_DESCRIPTION");
     }
 
     /**
